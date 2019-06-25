@@ -13,8 +13,6 @@ let playerPaddleMove;
 let playerPaddleX = 0;
 let playerPaddleY = 0;
 let comPaddleMove;
-let comPaddleX = 0;
-let comPaddleY = 0;
 const comStartX = 50;
 const comStartY = 0;
 let ballMove;
@@ -38,7 +36,7 @@ let ballCurrentPositionY = 0;
 function setup(){
   createCanvas(canvasX,canvasY);
   playerPaddleMove = createVector(playerPaddleX,playerPaddleY);
-  comPaddleMove = createVector(comPaddleX,comPaddleY);
+  comPaddleMove = createVector(0,0);
   ballMove = createVector(0,0);
   ballTempMove = createVector(0,0);  //used to pause unpause ball
 }
@@ -47,16 +45,17 @@ function draw(){
   background("black");
   gameOver = hasBallHitTopOfPaddle() || hasBallHitBottomOfPaddle();
   if(gameOver){
-
+    //console.log("game over");
     textAlign(CENTER);
     textSize(50);
+    fill(0, 102, 153);
     strokeWeight(0.5);
     text('GAME OVER',  canvasX/2,  canvasY/2);
   }
   else{
     push();
     fill("white");
-    pauseUnPauseTheBall();
+    pauseUnPauseTheBall(); //pause unpause only if game isnt over
     moveBall();
     translate(ballMove);
     circle(ballOriginalX, ballOriginalY, ballRadius); //the ball
