@@ -10,9 +10,11 @@ const paddleMoveSpeed = 10;
 const keyCodeW = 87;
 const keyCodeS = 83;
 let playerPaddleMove;
+let tempPlayerPaddleMove;
 let playerPaddleX = 0;
 let playerPaddleY = 0;
 let comPaddleMove;
+let tempComPaddleMove;
 const comStartX = 50;
 const comStartY = 0;
 const comPaddleSpeed = 10;
@@ -30,12 +32,14 @@ let ballHitTop = false;
 let ballHitPlayerPaddle = false;
 let gameOver = false;
 
-let pauseBall = false;
+let pauseAll = false;
 
 function setup(){
   createCanvas(canvasX,canvasY);
   playerPaddleMove = createVector(playerPaddleX,playerPaddleY);
+  tempPlayerPaddleMove = createVector(playerPaddleX,playerPaddleY);  //used to pause unpause player
   comPaddleMove = createVector(0,0);
+  tempComPaddleMove = createVector(0,0); //used to pause unpause com paddle
   ballMove = createVector(0,0);
   ballTempMove = createVector(0,0);  //used to pause unpause ball
 }
@@ -54,7 +58,7 @@ function draw(){
   else{
     push();
     fill("white");
-    pauseUnPauseTheBall(); //pause unpause only if game isnt over
+    globalPause(); //pause unpause only if game isnt over
     moveBall();
     translate(ballMove);
     circle(ballOriginalX, ballOriginalY, ballRadius); //the ball
@@ -78,28 +82,30 @@ function draw(){
 
 function movePaddle(){
   //console.log("here we are");
-  if(keyIsDown(keyCodeW)){
-    playerPaddleY -= paddleMoveSpeed;
-  }else if(keyIsDown(keyCodeS)){
-    playerPaddleY += paddleMoveSpeed;
-  }
-  if (playerStartY + playerPaddleY <= topScreenLimit) {
-    //have hit the top of screen (and going above)
-    playerPaddleY = -playerStartY;
-  }
-  if (playerStartY + playerPaddleY + paddleHeight >= bottomScreenLimit) {
-    //have hit the bottom of screen (and going below)
-    playerPaddleY = canvasY - playerStartY - paddleHeight;
-  }
+  if(pauseAll === false){
+    if(keyIsDown(keyCodeW)){
+      playerPaddleY -= paddleMoveSpeed;
+    }else if(keyIsDown(keyCodeS)){
+      playerPaddleY += paddleMoveSpeed;
+    }
+    if (playerStartY + playerPaddleY <= topScreenLimit) {
+      //have hit the top of screen (and going above)
+      playerPaddleY = -playerStartY;
+    }
+    if (playerStartY + playerPaddleY + paddleHeight >= bottomScreenLimit) {
+      //have hit the bottom of screen (and going below)
+      playerPaddleY = canvasY - playerStartY - paddleHeight;
+    }
 
-  playerPaddleMove.set(playerPaddleX,playerPaddleY);
-  //console.log(playerPaddleMove);
+    playerPaddleMove.set(playerPaddleX,playerPaddleY);
+    //console.log(playerPaddleMove);
+  }
 }
 
 function moveBall(){
   let ballPaddleX = ballMove.x;
   let ballPaddleY = ballMove.y;
-  if(pauseBall === false){
+  if(pauseAll === false){
     ballPaddleX += ballXDirection * ballXSpeed;
     ballPaddleY += ballYDirection * ballYSpeed;
     if(hasBallHitBottom()){
@@ -195,35 +201,68 @@ function hasBallHitBottomOfPaddle(){
   }
 }
 
+function globalPause(){
+  if(key === 'p'){
+    pauseAll = true;
+  }
+  if(key === 'o'){
+    pauseAll = false;
+  }
+  pauseUnPauseTheBall();
+  pauseUnPauseThePlayerPaddle();
+  pauseUnPauseTheComPaddle();
+}
+
 function pauseUnPauseTheBall(){
-  if(pauseBall === false && key === 'p'){ //case sensitive
+  if(pauseAll === false){ //case sensitive
     //console.log("Pause ball here");
-    pauseBall = true;
     ballTempMove = ballMove;
   }
-
-  if(pauseBall === true && key === 'o'){//case sensitive
+  if(pauseAll === true){//case sensitive
       //console.log("Unpause ball here");
-    pauseBall = false;
     ballMove = ballTempMove;
+  }
+}
+
+function pauseUnPauseThePlayerPaddle(){
+  if(pauseAll === false){ //case sensitive
+    //console.log("Pause ball here");
+    tempPlayerPaddleMove = playerPaddleMove;
+  }
+  if(pauseAll === true){//case sensitive
+      //console.log("Unpause ball here");
+    playerPaddleMove = tempPlayerPaddleMove;
+  }
+}
+
+function pauseUnPauseTheComPaddle(){
+  if(pauseAll === false){ //case sensitive
+    //console.log("Pause ball here");
+    tempComPaddleMove = comPaddleMove;
+  }
+  if(pauseAll === true){//case sensitive
+      //console.log("Unpause ball here");
+    comPaddleMove = tempComPaddleMove;
   }
 }
 
 function moveComPaddle(){
   //AI movement logic here
-  let ballCurrentPositionX = ballOriginalX + ballMove.x;
-  let ballCurrentPositionY = ballOriginalY + ballMove.y;
+  if(pauseAll === false){
+    let ballCurrentPositionX = ballOriginalX + ballMove.x;
+    let ballCurrentPositionY = ballOriginalY + ballMove.y;
 
-  //center alignment logic
-  let comPaddleX = comPaddleMove.x;
-  let comPaddleY = comPaddleMove.y;
-  let comCurrentPositionY = comStartY + comPaddleY;
-  if(ballCurrentPositionY > comCurrentPositionY &&
-      ballCurrentPositionY > comCurrentPositionY + paddleHeight){ //ball is below paddle and not in paddle range
-      comPaddleY += comPaddleSpeed;
+    //center alignment logic
+    let comPaddleX = comPaddleMove.x;
+    let comPaddleY = comPaddleMove.y;
+    let comCurrentPositionY = comStartY + comPaddleY;
+    if(ballCurrentPositionY > comCurrentPositionY &&
+        ballCurrentPositionY > comCurrentPositionY + paddleHeight){ //ball is below paddle and not in paddle range
+        comPaddleY += comPaddleSpeed;
+    }
+    else if(ballCurrentPositionY < comCurrentPositionY){//ball is above paddle
+      comPaddleY -= comPaddleSpeed;
+    }
+    comPaddleMove.set(comPaddleX, comPaddleY);
   }
-  else if(ballCurrentPositionY < comCurrentPositionY){//ball is above paddle
-    comPaddleY -= comPaddleSpeed;
-  }
-  comPaddleMove.set(comPaddleX, comPaddleY);
 }
