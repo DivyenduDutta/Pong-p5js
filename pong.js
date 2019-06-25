@@ -28,10 +28,15 @@ let ballHitTop = false;
 let ballHitPlayerPaddle = false;
 let gameOver = false;
 
+let pauseBall = false;
+let ballCurrentPositionX = 0;
+let ballCurrentPositionY = 0;
+
 function setup(){
   createCanvas(canvasX,canvasY);
   playerPaddleMove = createVector(playerPaddleX,playerPaddleY);
   ballMove = createVector(ballPaddleX,ballPaddleY);
+  ballTempMove = createVector(ballPaddleX,ballPaddleY);  //used to pause unpause ball
 }
 
 function draw(){
@@ -47,6 +52,7 @@ function draw(){
   else{
     push();
     fill("white");
+    pauseUnPauseTheBall();
     moveBall();
     translate(ballMove);
     circle(ballOriginalX, ballOriginalY, ballRadius); //the ball
@@ -85,24 +91,26 @@ function movePaddle(){
 }
 
 function moveBall(){
-  ballPaddleX += ballXDirection * ballXSpeed;
-  ballPaddleY += ballYDirection * ballYSpeed;
-  if(hasBallHitBottom()){
-    ballYDirection = -1;
-    ballHitBottom = false;
-  }
+  if(pauseBall === false){
+    ballPaddleX += ballXDirection * ballXSpeed;
+    ballPaddleY += ballYDirection * ballYSpeed;
+    if(hasBallHitBottom()){
+      ballYDirection = -1;
+      ballHitBottom = false;
+    }
 
-  if(hasBallHitTop()){
-    ballYDirection = 1;
-    ballHitTop = false;
-  }
+    if(hasBallHitTop()){
+      ballYDirection = 1;
+      ballHitTop = false;
+    }
 
-  if(hasBallHitPlayerPaddle()){
-    ballXDirection = -1;
-    ballHitPlayerPaddle = false;
+    if(hasBallHitPlayerPaddle()){
+      ballXDirection = -1;
+      ballHitPlayerPaddle = false;
+    }
+    ballMove.set(ballPaddleX, ballPaddleY);
+    //console.log(ballMove);
   }
-  ballMove.set(ballPaddleX, ballPaddleY);
-  //console.log(ballMove);
 }
 
 function hasBallHitBottom(){
@@ -164,5 +172,19 @@ function hasBallHitBottomOfPaddle(){
     ballOriginalY + ballPaddleY + (ballRadius - threshold) <= playerStartY + playerPaddleY + paddleHeight){
     console.log("ball hit bottom of paddle");
     return true;
+  }
+}
+
+function pauseUnPauseTheBall(){
+  if(pauseBall === false && key === 'p'){ //case sensitive
+    //console.log("Pause ball here");
+    pauseBall = true;
+    ballTempMove = ballMove;
+  }
+
+  if(pauseBall === true && key === 'o'){//case sensitive
+      //console.log("Unpause ball here");
+    pauseBall = false;
+    ballMove = ballTempMove;
   }
 }
