@@ -12,6 +12,9 @@ const keyCodeS = 83;
 let playerPaddleMove;
 let playerPaddleX = 0;
 let playerPaddleY = 0;
+let comPaddleMove;
+let comPaddleX = 0;
+let comPaddleY = 0;
 let ballMove;
 let ballPaddleX = 0;
 let ballPaddleY = 0;
@@ -35,6 +38,7 @@ let ballCurrentPositionY = 0;
 function setup(){
   createCanvas(canvasX,canvasY);
   playerPaddleMove = createVector(playerPaddleX,playerPaddleY);
+  comPaddleMove = createVector(comPaddleX,comPaddleY);
   ballMove = createVector(ballPaddleX,ballPaddleY);
   ballTempMove = createVector(ballPaddleX,ballPaddleY);  //used to pause unpause ball
 }
@@ -158,18 +162,20 @@ function hasBallHitPlayerY(){
 }
 
 function hasBallHitTopOfPaddle(){
+  //honestly this checks if ball hit top of paddle and if it has gone past it above
   let threshold = ballRadius * 0.5; //for more realistic ball bounce
   if(ballOriginalX + ballPaddleX >= playerStartX &&
-    ballOriginalY + ballPaddleY + (ballRadius - threshold) >= playerStartY + playerPaddleY){
+    ballOriginalY + ballPaddleY + (ballRadius - threshold) <= playerStartY + playerPaddleY){
     console.log("ball hit top of paddle");
     return true;
   }
 }
 
 function hasBallHitBottomOfPaddle(){
+  //Similarly this checks if ball hit bottom of paddle and if it has gone past it below
   let threshold = ballRadius * 0.5; //for more realistic ball bounce
   if(ballOriginalX + ballPaddleX >= playerStartX &&
-    ballOriginalY + ballPaddleY + (ballRadius - threshold) <= playerStartY + playerPaddleY + paddleHeight){
+    ballOriginalY + ballPaddleY + (ballRadius - threshold) >= playerStartY + playerPaddleY + paddleHeight){
     console.log("ball hit bottom of paddle");
     return true;
   }
