@@ -15,9 +15,9 @@ let playerPaddleY = 0;
 let comPaddleMove;
 let comPaddleX = 0;
 let comPaddleY = 0;
+const comStartX = 50;
+const comStartY = 0;
 let ballMove;
-let ballPaddleX = 0;
-let ballPaddleY = 0;
 const ballOriginalX = canvasX/2;
 const ballOriginalY = canvasY/2;
 const ballRadius = 20;
@@ -39,8 +39,8 @@ function setup(){
   createCanvas(canvasX,canvasY);
   playerPaddleMove = createVector(playerPaddleX,playerPaddleY);
   comPaddleMove = createVector(comPaddleX,comPaddleY);
-  ballMove = createVector(ballPaddleX,ballPaddleY);
-  ballTempMove = createVector(ballPaddleX,ballPaddleY);  //used to pause unpause ball
+  ballMove = createVector(0,0);
+  ballTempMove = createVector(0,0);  //used to pause unpause ball
 }
 
 function draw(){
@@ -62,14 +62,18 @@ function draw(){
     circle(ballOriginalX, ballOriginalY, ballRadius); //the ball
     pop();
 
-    fill("red");
-    rect(50,0,paddleWidth,paddleHeight); //AI paddle
-
     push();
     movePaddle();
     fill("blue");
     translate(playerPaddleMove);
     rect(playerStartX,playerStartY,paddleWidth,paddleHeight); //player paddle
+    pop();
+
+    push();
+    fill("red");
+    translate(comPaddleMove);
+    rect(comStartX,comStartY,paddleWidth,paddleHeight); //AI paddle
+    moveComPaddle();
     pop();
   }
 }
@@ -95,6 +99,8 @@ function movePaddle(){
 }
 
 function moveBall(){
+  let ballPaddleX = ballMove.x;
+  let ballPaddleY = ballMove.y;
   if(pauseBall === false){
     ballPaddleX += ballXDirection * ballXSpeed;
     ballPaddleY += ballYDirection * ballYSpeed;
@@ -118,6 +124,8 @@ function moveBall(){
 }
 
 function hasBallHitBottom(){
+  let ballPaddleX = ballMove.x;
+  let ballPaddleY = ballMove.y;
   let threshold = ballRadius * 0.5; //for more realistic ball bounce
   if(ballOriginalY + ballPaddleY + (ballRadius - threshold) >= bottomScreenLimit){
     //console.log("Ball hit bottom");
@@ -127,6 +135,8 @@ function hasBallHitBottom(){
 }
 
 function hasBallHitTop(){
+  let ballPaddleX = ballMove.x;
+  let ballPaddleY = ballMove.y;
   let threshold = ballRadius * 0.5; //for more realistic ball bounce
   if(ballOriginalY + ballPaddleY - (ballRadius - threshold) <= topScreenLimit){
     //console.log("Ball hit top");
@@ -145,6 +155,7 @@ function hasBallHitPlayerPaddle(){
 }
 
 function hasBallHitPlayerX(){
+  let ballPaddleX = ballMove.x;
     let threshold = ballRadius * 0.5; //for more realistic ball bounce
     if(ballOriginalX + ballPaddleX + (ballRadius - threshold) >= playerStartX){
       return true;
@@ -153,6 +164,7 @@ function hasBallHitPlayerX(){
 }
 
 function hasBallHitPlayerY(){
+  let ballPaddleY = ballMove.y;
     if(ballOriginalY + ballPaddleY >= playerStartY + playerPaddleY &&
         ballOriginalY + ballPaddleY <= playerStartY + playerPaddleY + paddleHeight){
       return true;
@@ -162,6 +174,8 @@ function hasBallHitPlayerY(){
 }
 
 function hasBallHitTopOfPaddle(){
+  let ballPaddleX = ballMove.x;
+  let ballPaddleY = ballMove.y;
   //honestly this checks if ball hit top of paddle and if it has gone past it above
   let threshold = ballRadius * 0.5; //for more realistic ball bounce
   if(ballOriginalX + ballPaddleX >= playerStartX &&
@@ -172,6 +186,8 @@ function hasBallHitTopOfPaddle(){
 }
 
 function hasBallHitBottomOfPaddle(){
+  let ballPaddleX = ballMove.x;
+  let ballPaddleY = ballMove.y;
   //Similarly this checks if ball hit bottom of paddle and if it has gone past it below
   let threshold = ballRadius * 0.5; //for more realistic ball bounce
   if(ballOriginalX + ballPaddleX >= playerStartX &&
@@ -193,4 +209,9 @@ function pauseUnPauseTheBall(){
     pauseBall = false;
     ballMove = ballTempMove;
   }
+}
+
+function moveComPaddle(){
+  //AI movement logic here
+
 }
