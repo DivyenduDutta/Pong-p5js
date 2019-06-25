@@ -15,6 +15,7 @@ let playerPaddleY = 0;
 let comPaddleMove;
 const comStartX = 50;
 const comStartY = 0;
+const comPaddleSpeed = 10;
 let ballMove;
 const ballOriginalX = canvasX/2;
 const ballOriginalY = canvasY/2;
@@ -30,8 +31,6 @@ let ballHitPlayerPaddle = false;
 let gameOver = false;
 
 let pauseBall = false;
-let ballCurrentPositionX = 0;
-let ballCurrentPositionY = 0;
 
 function setup(){
   createCanvas(canvasX,canvasY);
@@ -212,5 +211,19 @@ function pauseUnPauseTheBall(){
 
 function moveComPaddle(){
   //AI movement logic here
+  let ballCurrentPositionX = ballOriginalX + ballMove.x;
+  let ballCurrentPositionY = ballOriginalY + ballMove.y;
 
+  //center alignment logic
+  let comPaddleX = comPaddleMove.x;
+  let comPaddleY = comPaddleMove.y;
+  let comCurrentPositionY = comStartY + comPaddleY;
+  if(ballCurrentPositionY > comCurrentPositionY &&
+      ballCurrentPositionY > comCurrentPositionY + paddleHeight){ //ball is below paddle and not in paddle range
+      comPaddleY += comPaddleSpeed;
+  }
+  else if(ballCurrentPositionY < comCurrentPositionY){//ball is above paddle
+    comPaddleY -= comPaddleSpeed;
+  }
+  comPaddleMove.set(comPaddleX, comPaddleY);
 }
