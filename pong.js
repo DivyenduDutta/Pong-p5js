@@ -17,13 +17,13 @@ let comPaddleMove;
 let tempComPaddleMove;
 const COMSTARTX = 50;
 const COMSTARTY = 0;
-const COMPADDLESPEED = 1;
+const COMPADDLESPEED = 10;
 let ballMove;
 const BALLORIGINALX = CANVASX/2;
 const BALLORIGINALY = CANVASY/2;
 const BALLRADIUS = 20;
-const BALLXSPEED = 1;
-const BALLYSPEED = 5;
+let ballXSpeed = 1; //ball speed x and y is variable because it changes dynamically
+let ballYSpeed = 5;
 //change ballYDirection and ballXDirection to change ball movement direction
 let ballYDirection = -1;
 let ballXDirection = 1;
@@ -31,8 +31,8 @@ let ballHitBottom = false;
 let ballHitTop = false;
 let ballHitPlayerPaddle = false;
 let ballHitComPaddle = false;
-let gameOver = false;
-
+let gameOverPlayer = false;
+let gameOverCom = false;
 let pauseAll = false;
 
 function setup(){
@@ -47,14 +47,23 @@ function setup(){
 
 function draw(){
   background("black");
-  gameOver = hasBallHitTopOfPaddle() || hasBallHitBottomOfPaddle();
-  if(gameOver){
+  gameOverPlayer = hasBallHitTopOfPaddle() || hasBallHitBottomOfPaddle();
+  gameOverCom = hasBallHitTopOfComPaddle() || hasBallHitBottomOfComPaddle();
+  if(gameOverPlayer){
     //console.log("game over");
     textAlign(CENTER);
-    textSize(50);
+    textSize(30);
     fill(0, 102, 153);
     strokeWeight(0.5);
-    text('GAME OVER',  CANVASX/2,  CANVASY/2);
+    text('GAME OVER - COM WINS YOU LOSE',  CANVASX/2,  CANVASY/2);
+  }
+  else if(gameOverCom){
+    //console.log("game over");
+    textAlign(CENTER);
+    textSize(30);
+    fill(0, 102, 153);
+    strokeWeight(0.5);
+    text('GAME OVER - PLAYER WINS COM LOSES',  CANVASX/2,  CANVASY/2);
   }
   else{
     push();
@@ -107,8 +116,8 @@ function moveBall(){
   let ballPaddleX = ballMove.x;
   let ballPaddleY = ballMove.y;
   if(pauseAll === false){
-    ballPaddleX += ballXDirection * BALLXSPEED;
-    ballPaddleY += ballYDirection * BALLYSPEED;
+    ballPaddleX += ballXDirection * ballXSpeed;
+    ballPaddleY += ballYDirection * ballYSpeed;
     if(hasBallHitBottom()){
       ballYDirection = -1;
       ballHitBottom = false;
@@ -120,10 +129,14 @@ function moveBall(){
     }
 
     if(hasBallHitPlayerPaddle()){
+      ballXSpeed += 0.2;
+      ballYSpeed += 0.2;
       ballXDirection = -1;
       ballHitPlayerPaddle = false;
     }
     if(hasBallHitComPaddle()){
+      ballXSpeed += 0.2;
+      ballYSpeed += 0.2;
       ballXDirection = 1;
       ballHitComPaddle   = false;
     }
@@ -299,5 +312,29 @@ function moveComPaddle(){
       }
     }
     comPaddleMove.set(comPaddleX, comPaddleY);
+  }
+}
+
+function hasBallHitTopOfComPaddle(){
+  let ballPaddleX = ballMove.x;
+  let ballPaddleY = ballMove.y;
+  //honestly this checks if ball hit top of paddle and if it has gone past it above
+  let threshold = BALLRADIUS * 0.5; //for more realistic ball bounce
+  if(BALLORIGINALX + ballPaddleX <= (COMSTARTX + PADDLEWIDTH) &&
+    BALLORIGINALY + ballPaddleY + (BALLRADIUS - threshold) <= PLAYERSTARTY + playerPaddleY){
+    console.log("ball hit top of com paddle");
+    return true;
+  }
+}
+
+function hasBallHitBottomOfComPaddle(){
+  let ballPaddleX = ballMove.x;
+  let ballPaddleY = ballMove.y;
+  //Similarly this checks if ball hit bottom of paddle and if it has gone past it below
+  let threshold = BALLRADIUS * 0.5; //for more realistic ball bounce
+  if(BALLORIGINALX + ballPaddleX <= (COMSTARTX + PADDLEWIDTH) &&
+    BALLORIGINALY + ballPaddleY + (BALLRADIUS - threshold) >= COMSTARTY + playerPaddleY + PADDLEHEIGHT){
+    console.log("ball hit bottom of com paddle");
+    return true;
   }
 }
