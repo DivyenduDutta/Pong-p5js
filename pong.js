@@ -30,6 +30,7 @@ let ballXDirection = 1;
 let ballHitBottom = false;
 let ballHitTop = false;
 let ballHitPlayerPaddle = false;
+let ballHitComPaddle = false;
 let gameOver = false;
 
 let pauseAll = false;
@@ -122,6 +123,10 @@ function moveBall(){
       ballXDirection = -1;
       ballHitPlayerPaddle = false;
     }
+    if(hasBallHitComPaddle()){
+      ballXDirection = 1;
+      ballHitComPaddle   = false;
+    }
     ballMove.set(ballPaddleX, ballPaddleY);
     //console.log(ballMove);
   }
@@ -150,7 +155,6 @@ function hasBallHitTop(){
 }
 
 function hasBallHitPlayerPaddle(){
-  let threshold = BALLRADIUS * 0.5; //for more realistic ball bounce
   if(hasBallHitPlayerX() && hasBallHitPlayerY()){
     console.log("Ball hit player paddle");
     ballHitPlayerPaddle = true;
@@ -171,6 +175,34 @@ function hasBallHitPlayerY(){
   let ballPaddleY = ballMove.y;
     if(BALLORIGINALY + ballPaddleY >= PLAYERSTARTY + playerPaddleY &&
         BALLORIGINALY + ballPaddleY <= PLAYERSTARTY + playerPaddleY + PADDLEHEIGHT){
+      return true;
+    }
+
+    return false;
+}
+
+function hasBallHitComPaddle(){
+  if(hasBallHitComX() && hasBallHitComY()){
+    console.log("Ball hit com paddle");
+    ballHitComPaddle = true;
+  }
+  return ballHitComPaddle;
+}
+
+function hasBallHitComX(){
+  let ballPaddleX = ballMove.x;
+    let threshold = BALLRADIUS * 0.5; //for more realistic ball bounce
+    if(BALLORIGINALX + ballPaddleX - (BALLRADIUS - threshold) <= (COMSTARTX + PADDLEWIDTH)){
+      return true;
+    }
+    return false;
+}
+
+function hasBallHitComY(){
+  let ballPaddleY = ballMove.y;
+  let comPaddleY = comPaddleMove.y;
+    if(BALLORIGINALY + ballPaddleY >= COMSTARTY + comPaddleY &&
+        BALLORIGINALY + ballPaddleY <= PLAYERSTARTY + comPaddleY + PADDLEHEIGHT){
       return true;
     }
 
