@@ -25,7 +25,7 @@ const BALLRADIUS = 20;
 let ballXSpeed = 1; //ball speed x and y is variable because it changes dynamically
 let ballYSpeed = 5;
 //change ballYDirection and ballXDirection to change ball movement direction
-let ballYDirection = -1;
+let ballYDirection = 1;
 let ballXDirection = 1;
 let ballHitBottom = false;
 let ballHitTop = false;
@@ -43,9 +43,12 @@ function setup(){
   tempComPaddleMove = createVector(0,0); //used to pause unpause com paddle
   ballMove = createVector(0,0);
   ballTempMove = createVector(0,0);  //used to pause unpause ball
+  ballXDirection = random([-1, 1]);
+  ballYDirection = random([-1, 1]);
 }
 
 function draw(){
+  //console.log(ballXSpeed+' '+ballYSpeed);
   background("black");
   gameOverPlayer = hasBallHitTopOfPaddle() || hasBallHitBottomOfPaddle();
   gameOverCom = hasBallHitTopOfComPaddle() || hasBallHitBottomOfComPaddle();
