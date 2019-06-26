@@ -17,7 +17,7 @@ let comPaddleMove;
 let tempComPaddleMove;
 const COMSTARTX = 50;
 const COMSTARTY = 0;
-const COMPADDLESPEED = 10;
+const COMPADDLESPEED = 1;
 let ballMove;
 const BALLORIGINALX = CANVASX/2;
 const BALLORIGINALY = CANVASY/2;
@@ -202,7 +202,7 @@ function hasBallHitComY(){
   let ballPaddleY = ballMove.y;
   let comPaddleY = comPaddleMove.y;
     if(BALLORIGINALY + ballPaddleY >= COMSTARTY + comPaddleY &&
-        BALLORIGINALY + ballPaddleY <= PLAYERSTARTY + comPaddleY + PADDLEHEIGHT){
+        BALLORIGINALY + ballPaddleY <= COMSTARTY + comPaddleY + PADDLEHEIGHT){
       return true;
     }
 
@@ -288,12 +288,15 @@ function moveComPaddle(){
     let comPaddleX = comPaddleMove.x;
     let comPaddleY = comPaddleMove.y;
     let comCurrentPositionY = COMSTARTY + comPaddleY;
-    if(ballCurrentPositionY > comCurrentPositionY &&
-        ballCurrentPositionY > comCurrentPositionY + PADDLEHEIGHT){ //ball is below paddle and not in paddle range
-        comPaddleY += COMPADDLESPEED;
-    }
-    else if(ballCurrentPositionY < comCurrentPositionY){//ball is above paddle
-      comPaddleY -= COMPADDLESPEED;
+    //realistic AI movement - paddle moves only when needed - once paddle hits ball it stops
+    if(ballCurrentPositionX < CANVASX/2 && ballXDirection === -1){
+      if(ballCurrentPositionY > comCurrentPositionY &&
+          ballCurrentPositionY > comCurrentPositionY + PADDLEHEIGHT){ //ball is below paddle and not in paddle range
+          comPaddleY += COMPADDLESPEED;
+      }
+      else if(ballCurrentPositionY < comCurrentPositionY){//ball is above paddle
+        comPaddleY -= COMPADDLESPEED;
+      }
     }
     comPaddleMove.set(comPaddleX, comPaddleY);
   }
