@@ -189,9 +189,13 @@ function hasBallHitTop(){
   return ballHitTop;
 }
 
+function shouldBallHitPlayerXCheck(){
+  return ballXDirection === -1?false:true;
+}
+
 function hasBallHitPlayerPaddle(){
-  if(hasBallHitPlayerX() && hasBallHitPlayerY()){
-    //console.log("Ball hit player paddle");
+  if(shouldBallHitPlayerXCheck() && hasBallHitPlayerX() && hasBallHitPlayerY()){
+    console.log("Ball hit player paddle");
     //takeScreencap();
     ballHitPlayerPaddle = true;
   }
@@ -199,12 +203,20 @@ function hasBallHitPlayerPaddle(){
 }
 
 function hasBallHitPlayerX(){
-  let ballPaddleX = ballMove.x;
+    let ballPaddleX = ballMove.x;
+    let isHit = false;
     let threshold = BALLRADIUS * 0.2; //for more realistic ball bounce
-    if(BALLORIGINALX + ballPaddleX + (BALLRADIUS - threshold) >= PLAYERSTARTX){
-      return true;
+    let ballCurrentPositionX = BALLORIGINALX + ballPaddleX + (BALLRADIUS - threshold);
+    //console.log(ballXSpeed);
+    let ballDisplacementNextFrameX = ballXDirection * ballXSpeed;
+    let ballPositionNextFrameX = ballCurrentPositionX + ballDisplacementNextFrameX;
+    if(ballCurrentPositionX < PLAYERSTARTX &&
+       (PLAYERSTARTX - ballCurrentPositionX) < (ballPositionNextFrameX - PLAYERSTARTX)){
+      isHit = true;
+    }else if(ballCurrentPositionX >= PLAYERSTARTX){
+      isHit = true;
     }
-    return false;
+    return isHit;
 }
 
 function hasBallHitPlayerY(){
@@ -217,9 +229,13 @@ function hasBallHitPlayerY(){
     return false;
 }
 
+function shouldBallHitComXCheck(){
+  return ballXDirection === 1?false:true;
+}
+
 function hasBallHitComPaddle(){
-  if(hasBallHitComX() && hasBallHitComY()){
-    //console.log("Ball hit com paddle");
+  if(shouldBallHitComXCheck() && hasBallHitComX() && hasBallHitComY()){
+    console.log("Ball hit com paddle");
     ballHitComPaddle = true;
   }
   return ballHitComPaddle;
