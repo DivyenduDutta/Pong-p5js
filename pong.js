@@ -34,6 +34,11 @@ let ballHitComPaddle = false;
 let gameOverPlayer = false;
 let gameOverCom = false;
 let pauseAll = false;
+let gameOverFreeze = false;
+
+let frames = 0;
+let totalFrames = 0;
+let startTime, endTime;
 
 function setup(){
   createCanvas(CANVASX,CANVASY);
@@ -45,30 +50,34 @@ function setup(){
   ballTempMove = createVector(0,0);  //used to pause unpause ball
   ballXDirection = random([-1, 1]);
   ballYDirection = random([-1, 1]);
+  startTime = new Date();
 }
 
 function draw(){
   //console.log(ballXSpeed+' '+ballYSpeed);
   background("black");
+  fpsCounter();
   gameOverPlayer = hasBallHitTopOfPaddle() || hasBallHitBottomOfPaddle();
   gameOverCom = hasBallHitTopOfComPaddle() || hasBallHitBottomOfComPaddle();
   if(gameOverPlayer){
-    //console.log("game over");
+    console.log("game over");
     textAlign(CENTER);
-    textSize(30);
+    textSize(25);
     fill(0, 102, 153);
     strokeWeight(0.5);
     text('GAME OVER - COM WINS YOU LOSE',  CANVASX/2,  CANVASY/2);
+    pauseOnGameOver();
   }
-  else if(gameOverCom){
+  if(gameOverCom){
     //console.log("game over");
     textAlign(CENTER);
-    textSize(30);
+    textSize(25);
     fill(0, 102, 153);
     strokeWeight(0.5);
     text('GAME OVER - PLAYER WINS COM LOSES',  CANVASX/2,  CANVASY/2);
+    pauseOnGameOver();
   }
-  else{
+
     push();
     fill("white");
     globalPause(); //pause unpause only if game isnt over
@@ -90,12 +99,22 @@ function draw(){
     rect(COMSTARTX,COMSTARTY,PADDLEWIDTH,PADDLEHEIGHT); //AI paddle
     moveComPaddle();
     pop();
-  }
+
 }
+
+// function takeScreencap(){
+//   html2canvas(document.body).then(function(canvas) {
+//     // Export the canvas to its data URI representation
+//     canvas.toBlob(function(blob) {
+//         // Generate file download
+//         window.saveAs(blob, "yourwebsite_screenshot.png");
+//     });
+// });
+// }
 
 function movePaddle(){
   //console.log("here we are");
-  if(pauseAll === false){
+  if(gameOverFreeze === false && pauseAll === false){
     if(keyIsDown(KEYCODEW)){
       playerPaddleY -= PADDLEMOVESPEED;
     }else if(keyIsDown(KEYCODES)){
@@ -118,7 +137,7 @@ function movePaddle(){
 function moveBall(){
   let ballPaddleX = ballMove.x;
   let ballPaddleY = ballMove.y;
-  if(pauseAll === false){
+  if(gameOverFreeze === false && pauseAll === false){//put this condition in a function check
     ballPaddleX += ballXDirection * ballXSpeed;
     ballPaddleY += ballYDirection * ballYSpeed;
     if(hasBallHitBottom()){
@@ -172,7 +191,8 @@ function hasBallHitTop(){
 
 function hasBallHitPlayerPaddle(){
   if(hasBallHitPlayerX() && hasBallHitPlayerY()){
-    console.log("Ball hit player paddle");
+    //console.log("Ball hit player paddle");
+    //takeScreencap();
     ballHitPlayerPaddle = true;
   }
   return ballHitPlayerPaddle;
@@ -180,7 +200,7 @@ function hasBallHitPlayerPaddle(){
 
 function hasBallHitPlayerX(){
   let ballPaddleX = ballMove.x;
-    let threshold = BALLRADIUS * 0.5; //for more realistic ball bounce
+    let threshold = BALLRADIUS * 0.2; //for more realistic ball bounce
     if(BALLORIGINALX + ballPaddleX + (BALLRADIUS - threshold) >= PLAYERSTARTX){
       return true;
     }
@@ -199,7 +219,7 @@ function hasBallHitPlayerY(){
 
 function hasBallHitComPaddle(){
   if(hasBallHitComX() && hasBallHitComY()){
-    console.log("Ball hit com paddle");
+    //console.log("Ball hit com paddle");
     ballHitComPaddle = true;
   }
   return ballHitComPaddle;
@@ -207,7 +227,7 @@ function hasBallHitComPaddle(){
 
 function hasBallHitComX(){
   let ballPaddleX = ballMove.x;
-    let threshold = BALLRADIUS * 0.5; //for more realistic ball bounce
+    let threshold = BALLRADIUS * 0.2; //for more realistic ball bounce
     if(BALLORIGINALX + ballPaddleX - (BALLRADIUS - threshold) <= (COMSTARTX + PADDLEWIDTH)){
       return true;
     }
@@ -247,6 +267,10 @@ function hasBallHitBottomOfPaddle(){
     console.log("ball hit bottom of paddle");
     return true;
   }
+}
+
+function pauseOnGameOver(){
+  gameOverFreeze = true;
 }
 
 function globalPause(){
@@ -296,7 +320,7 @@ function pauseUnPauseTheComPaddle(){
 
 function moveComPaddle(){
   //AI movement logic here
-  if(pauseAll === false){
+  if(gameOverFreeze === false && pauseAll === false){
     let ballCurrentPositionX = BALLORIGINALX + ballMove.x;
     let ballCurrentPositionY = BALLORIGINALY + ballMove.y;
 
@@ -321,10 +345,11 @@ function moveComPaddle(){
 function hasBallHitTopOfComPaddle(){
   let ballPaddleX = ballMove.x;
   let ballPaddleY = ballMove.y;
+  let comPaddleY = comPaddleMove.y;
   //honestly this checks if ball hit top of paddle and if it has gone past it above
   let threshold = BALLRADIUS * 0.5; //for more realistic ball bounce
   if(BALLORIGINALX + ballPaddleX <= (COMSTARTX + PADDLEWIDTH) &&
-    BALLORIGINALY + ballPaddleY + (BALLRADIUS - threshold) <= PLAYERSTARTY + playerPaddleY){
+    BALLORIGINALY + ballPaddleY + (BALLRADIUS - threshold) <= COMSTARTY + comPaddleY){
     console.log("ball hit top of com paddle");
     return true;
   }
@@ -333,11 +358,33 @@ function hasBallHitTopOfComPaddle(){
 function hasBallHitBottomOfComPaddle(){
   let ballPaddleX = ballMove.x;
   let ballPaddleY = ballMove.y;
+  let comPaddleY = comPaddleMove.y;
   //Similarly this checks if ball hit bottom of paddle and if it has gone past it below
   let threshold = BALLRADIUS * 0.5; //for more realistic ball bounce
   if(BALLORIGINALX + ballPaddleX <= (COMSTARTX + PADDLEWIDTH) &&
-    BALLORIGINALY + ballPaddleY + (BALLRADIUS - threshold) >= COMSTARTY + playerPaddleY + PADDLEHEIGHT){
+    BALLORIGINALY + ballPaddleY + (BALLRADIUS - threshold) >= COMSTARTY + comPaddleY + PADDLEHEIGHT){
     console.log("ball hit bottom of com paddle");
     return true;
   }
+}
+
+function displayFrame(){
+  textAlign(LEFT);
+  textSize(15);
+  fill(255, 255, 255);
+  strokeWeight(0.5);
+  text(totalFrames+" FPS",  5,  15);
+}
+
+function fpsCounter(){
+  //console.log(totalFrames);
+  endTime = new Date();
+  if(Math.round((endTime - startTime)/1000) === 1){ //count a second
+    totalFrames = frames;
+    frames = 0;
+    startTime = new Date();
+  }else{
+    frames += 1;
+  }
+  displayFrame();
 }
