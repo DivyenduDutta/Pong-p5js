@@ -4,13 +4,13 @@ Pong written in javascript and p5.js
 p5.js is a javascript library that allows programmers to do something callled "Sketching" or "drawing in code".
 
 ## Building
-run "npm install" to download all dependencies - we only need browserify to package all the code into bundle.js
-run "npm run build" 
-open index.html in browser
+* run "npm install" to download all dependencies - we only need browserify to package all the code into bundle.js
+* run "npm run build" 
+* open index.html in browser
 
 ## Pong in action
 ![](pong-p5js.gif)
 
 ## References
 
-https://p5js.org/reference/
+[p5.js](https://p5js.org/reference/)
