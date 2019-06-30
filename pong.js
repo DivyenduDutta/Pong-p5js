@@ -25,12 +25,11 @@ const s = ( p ) => {
   };
 
 p.draw = function() {
+    timerFPSModule.fpsCounter(p);
     welcomeModule.checkIfEnterPressedForGameStart(p);
     if(!welcomeModule.getGameStart()){
       welcomeModule.displayWelcomeScreen(p);
     }else {
-      p.background("black");
-      timerFPSModule.fpsCounter(p);
       gameOverModule.setGameOverPlayer(playerModule.hasBallHitTopOfPaddle() || playerModule.hasBallHitBottomOfPaddle());
       gameOverModule.setGameOverCom(comModule.hasBallHitTopOfComPaddle() || comModule.hasBallHitBottomOfComPaddle());
       if(gameOverModule.getGameOverPlayer()){
