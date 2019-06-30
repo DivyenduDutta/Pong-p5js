@@ -57,7 +57,7 @@ function hasBallHitTopOfComPaddle(){
   let threshold = ballModule.BALLRADIUS * 0.5; //for more realistic ball bounce
   if(ballModule.BALLORIGINALX + ballPaddleX <= (COMSTARTX + gameConstantsModule.PADDLEWIDTH) &&
     ballModule.BALLORIGINALY + ballPaddleY + (ballModule.BALLRADIUS - threshold) <= COMSTARTY + comPaddleY){
-    console.log("ball hit top of com paddle");
+    //console.log("ball hit top of com paddle");
     return true;
   }
 }
@@ -70,7 +70,7 @@ function hasBallHitBottomOfComPaddle(){
   let threshold = ballModule.BALLRADIUS * 0.5; //for more realistic ball bounce
   if(ballModule.BALLORIGINALX + ballPaddleX <= (COMSTARTX + gameConstantsModule.PADDLEWIDTH) &&
     ballModule.BALLORIGINALY + ballPaddleY + (ballModule.BALLRADIUS - threshold) >= COMSTARTY + comPaddleY + gameConstantsModule.PADDLEHEIGHT){
-    console.log("ball hit bottom of com paddle");
+    //console.log("ball hit bottom of com paddle");
     return true;
   }
 }

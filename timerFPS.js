@@ -14,13 +14,12 @@ function initTimer(){
 }
 
 function displayFrame(p){
-  p.push();
+  p.background("black");
   p.textAlign(p.LEFT);
   p.textSize(15);
   p.fill(255, 255, 255);
   p.strokeWeight(0.5);
   p.text(totalFrames+" FPS",  5,  15);
-  p.pop();
 }
 
 function fpsCounter(p){
