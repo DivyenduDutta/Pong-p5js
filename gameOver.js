@@ -35,12 +35,14 @@ function pauseOnGameOver(){
 }
 
 function globalPause(p, moveValues){
-  if(p.key === 'p'){
+  if(p.key === 'p' && !getGameOverPlayer() && !getGameOverCom()){
     pauseAll = true;
-    displayPauseText(p);
   }
   if(p.key === 'o'){
     pauseAll = false;
+  }
+  if(pauseAll){
+    displayPauseText(p);
   }
   let ballMoveValues = pauseUnPauseTheBall(moveValues[0], moveValues[1]);
   let playerPaddleMoveValues = pauseUnPauseThePlayerPaddle(moveValues[2], moveValues[3]);
