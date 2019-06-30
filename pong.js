@@ -11,6 +11,7 @@ let timerFPSModule = require('./timerFPS.js');
 let gameOverModule = require('./gameOver.js');
 let comModule = require('./comPaddle.js');
 let playerModule = require('./playerPaddle.js');
+let welcomeModule = require('./welcomeScreen.js');
 
 //Instance mode p5.js
 const s = ( p ) => {
@@ -24,46 +25,50 @@ const s = ( p ) => {
   };
 
 p.draw = function() {
-    //console.log(ballXSpeed+' '+ballYSpeed);
-    p.background("black");
-    timerFPSModule.fpsCounter(p);
-    gameOverModule.setGameOverPlayer(playerModule.hasBallHitTopOfPaddle() || playerModule.hasBallHitBottomOfPaddle());
-    gameOverModule.setGameOverCom(comModule.hasBallHitTopOfComPaddle() || comModule.hasBallHitBottomOfComPaddle());
-    if(gameOverModule.getGameOverPlayer()){
-      //console.log("game over");
-      let gameOverPlayerText = 'GAME OVER - COM WINS YOU LOSE';
-      gameOverModule.displayGameOverText(gameOverPlayerText, p);
-    }
-    if(gameOverModule.getGameOverCom()){
-      //console.log("game over");
-      let gameOverComText = 'GAME OVER - PLAYER WINS COM LOSES';
-      gameOverModule.displayGameOverText(gameOverComText, p);
-    }
+    welcomeModule.checkIfEnterPressedForGameStart(p);
+    if(!welcomeModule.getGameStart()){
+      welcomeModule.displayWelcomeScreen(p);
+    }else {
+      p.background("black");
+      timerFPSModule.fpsCounter(p);
+      gameOverModule.setGameOverPlayer(playerModule.hasBallHitTopOfPaddle() || playerModule.hasBallHitBottomOfPaddle());
+      gameOverModule.setGameOverCom(comModule.hasBallHitTopOfComPaddle() || comModule.hasBallHitBottomOfComPaddle());
+      if(gameOverModule.getGameOverPlayer()){
+        //console.log("game over");
+        let gameOverPlayerText = 'GAME OVER - COM WINS YOU LOSE';
+        gameOverModule.displayGameOverText(gameOverPlayerText, p);
+      }
+      if(gameOverModule.getGameOverCom()){
+        //console.log("game over");
+        let gameOverComText = 'GAME OVER - PLAYER WINS COM LOSES';
+        gameOverModule.displayGameOverText(gameOverComText, p);
+      }
 
-      p.push();
-      p.fill("white");
-      moveValues = [ballModule.getBallMove(), ballModule.getTempBallMove(), playerModule.getPlayerPaddleMove(),
-                      playerModule.getTempPlayerPaddleMove(), comModule.getComPaddleMove(), comModule.getTempComPaddleMove()];
-      let updatedMoveValues = gameOverModule.globalPause(p, moveValues); //pause unpause only if game isnt over
-      updateMoveValues(updatedMoveValues);
-      ballModule.moveBall(playerModule.getPlayerPaddleMove(), comModule.getComPaddleMove(), p);
-      p.translate(ballModule.getBallMove());
-      p.circle(ballModule.BALLORIGINALX, ballModule.BALLORIGINALY, ballModule.BALLRADIUS); //the ball
-      p.pop();
+        p.push();
+        p.fill("white");
+        moveValues = [ballModule.getBallMove(), ballModule.getTempBallMove(), playerModule.getPlayerPaddleMove(),
+                        playerModule.getTempPlayerPaddleMove(), comModule.getComPaddleMove(), comModule.getTempComPaddleMove()];
+        let updatedMoveValues = gameOverModule.globalPause(p, moveValues); //pause unpause only if game isnt over
+        updateMoveValues(updatedMoveValues);
+        ballModule.moveBall(playerModule.getPlayerPaddleMove(), comModule.getComPaddleMove(), p);
+        p.translate(ballModule.getBallMove());
+        p.circle(ballModule.BALLORIGINALX, ballModule.BALLORIGINALY, ballModule.BALLRADIUS); //the ball
+        p.pop();
 
-      p.push();
-      playerModule.movePaddle(p);
-      p.fill("blue");
-      p.translate(playerModule.getPlayerPaddleMove());
-      p.rect(playerModule.PLAYERSTARTX,playerModule.PLAYERSTARTY,gameConstantsModule.PADDLEWIDTH,gameConstantsModule.PADDLEHEIGHT); //player paddle
-      p.pop();
+        p.push();
+        playerModule.movePaddle(p);
+        p.fill("blue");
+        p.translate(playerModule.getPlayerPaddleMove());
+        p.rect(playerModule.PLAYERSTARTX,playerModule.PLAYERSTARTY,gameConstantsModule.PADDLEWIDTH,gameConstantsModule.PADDLEHEIGHT); //player paddle
+        p.pop();
 
-      p.push();
-      p.fill("red");
-      p.translate(comModule.getComPaddleMove());
-      p.rect(comModule.COMSTARTX,comModule.COMSTARTY,gameConstantsModule.PADDLEWIDTH,gameConstantsModule.PADDLEHEIGHT); //AI paddle
-      comModule.moveComPaddle();
-      p.pop();
+        p.push();
+        p.fill("red");
+        p.translate(comModule.getComPaddleMove());
+        p.rect(comModule.COMSTARTX,comModule.COMSTARTY,gameConstantsModule.PADDLEWIDTH,gameConstantsModule.PADDLEHEIGHT); //AI paddle
+        comModule.moveComPaddle();
+        p.pop();
+      }
   };
 };
 
