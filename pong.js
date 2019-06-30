@@ -44,6 +44,7 @@ p.draw = function() {
         gameOverModule.displayGameOverText(gameOverComText, p);
       }
 
+        //draw the ball
         p.push();
         p.fill("white");
         moveValues = [ballModule.getBallMove(), ballModule.getTempBallMove(), playerModule.getPlayerPaddleMove(),
@@ -55,6 +56,13 @@ p.draw = function() {
         p.circle(ballModule.BALLORIGINALX, ballModule.BALLORIGINALY, ballModule.BALLRADIUS); //the ball
         p.pop();
 
+        //draw the center line
+        p.push();
+        p.stroke(200);
+        p.line(gameConstantsModule.CANVASX/2, 0, gameConstantsModule.CANVASX/2, gameConstantsModule.CANVASY);
+        p.pop();
+
+        //draw the player paddle - right
         p.push();
         playerModule.movePaddle(p);
         p.fill("blue");
@@ -62,6 +70,7 @@ p.draw = function() {
         p.rect(playerModule.PLAYERSTARTX,playerModule.PLAYERSTARTY,gameConstantsModule.PADDLEWIDTH,gameConstantsModule.PADDLEHEIGHT); //player paddle
         p.pop();
 
+        //draw the com paddle - left
         p.push();
         p.fill("red");
         p.translate(comModule.getComPaddleMove());
