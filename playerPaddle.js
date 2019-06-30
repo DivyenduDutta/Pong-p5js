@@ -28,7 +28,6 @@ function initPlayerPaddle(p){
 }
 
 function movePaddle(p){
-  //console.log("here we are");
   if(gameOverModule.getGameOverFreeze() === false && gameOverModule.getPauseAll() === false){
     if(p.keyIsDown(gameConstantsModule.KEYCODEW)){
       playerPaddleY -= PADDLEMOVESPEED;
@@ -56,7 +55,7 @@ function hasBallHitTopOfPaddle(){
   let threshold = ballModule.BALLRADIUS * 0.5; //for more realistic ball bounce
   if(ballModule.BALLORIGINALX + ballPaddleX >= PLAYERSTARTX &&
     ballModule.BALLORIGINALY + ballPaddleY + (ballModule.BALLRADIUS - threshold) <= PLAYERSTARTY + playerPaddleY){
-    console.log("ball hit top of paddle");
+    //console.log("ball hit top of paddle");
     return true;
   }
 }
@@ -68,7 +67,7 @@ function hasBallHitBottomOfPaddle(){
   let threshold = ballModule.BALLRADIUS * 0.5; //for more realistic ball bounce
   if(ballModule.BALLORIGINALX + ballPaddleX >= PLAYERSTARTX &&
     ballModule.BALLORIGINALY + ballPaddleY + (ballModule.BALLRADIUS - threshold) >= PLAYERSTARTY + playerPaddleY + gameConstantsModule.PADDLEHEIGHT){
-    console.log("ball hit bottom of paddle");
+    //console.log("ball hit bottom of paddle");
     return true;
   }
 }
