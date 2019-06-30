@@ -37,6 +37,7 @@ function pauseOnGameOver(){
 function globalPause(p, moveValues){
   if(p.key === 'p'){
     pauseAll = true;
+    displayPauseText(p);
   }
   if(p.key === 'o'){
     pauseAll = false;
@@ -45,6 +46,16 @@ function globalPause(p, moveValues){
   let playerPaddleMoveValues = pauseUnPauseThePlayerPaddle(moveValues[2], moveValues[3]);
   let comPaddleMoveValues = pauseUnPauseTheComPaddle(moveValues[4], moveValues[5]);
   return [ballMoveValues, playerPaddleMoveValues, comPaddleMoveValues]
+}
+
+function displayPauseText(p){
+  p.push();
+  p.textAlign(p.CENTER);
+  p.textSize(15);
+  p.fill(0, 0, 255);
+  p.strokeWeight(0.5);
+  p.text('Paused - Press o to unpause',  gameConstantsModule.CANVASX/2,  gameConstantsModule.CANVASY/2);
+  p.pop();
 }
 
 function pauseUnPauseTheBall(ballMove, ballTempMove){
