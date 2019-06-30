@@ -46,7 +46,7 @@ p.draw = function() {
                       playerModule.getTempPlayerPaddleMove(), comModule.getComPaddleMove(), comModule.getTempComPaddleMove()];
       let updatedMoveValues = gameOverModule.globalPause(p, moveValues); //pause unpause only if game isnt over
       updateMoveValues(updatedMoveValues);
-      ballModule.moveBall(playerModule.getPlayerPaddleMove(), comModule.getComPaddleMove());
+      ballModule.moveBall(playerModule.getPlayerPaddleMove(), comModule.getComPaddleMove(), p);
       p.translate(ballModule.getBallMove());
       p.circle(ballModule.BALLORIGINALX, ballModule.BALLORIGINALY, ballModule.BALLRADIUS); //the ball
       p.pop();
