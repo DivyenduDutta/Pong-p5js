@@ -1,0 +1,12 @@
+{
+"name": "Pong-p5js",
+"version": "1.0.0",
+"description": "Pong written in javascript and p5js",
+"author": "Divyendu Dutta",
+"scripts": {
+   "build": "browserify pong.js -o bundle.js"
+ },
+ "dependencies": {
+  "browserify": "16.2.3"
+ }
+}
