@@ -21,7 +21,7 @@ const s = ( p ) => {
     playerModule.initPlayerPaddle(p);
     comModule.initComPaddle(p);
     ballModule.initBall(p);
-    timerFPSModule.initTimer();
+    //timerFPSModule.initTimer();
   };
 
 p.draw = function() {
